@@ -26,7 +26,7 @@ static int __check_raw_route(const char *raw_route)
     ret += (strlen(raw_route) != 3);
     ret += __is_letter(raw_route[0]);
     ret += __is_letter(raw_route[1]);
-    ret+ __is_number(raw_route[2]);
+    ret += __is_number(raw_route[2]);
 
     return ret;
 }
