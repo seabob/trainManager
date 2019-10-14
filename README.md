@@ -5,10 +5,11 @@ BUILD AND RUN
         mkdir build
         cd build
         cmake ..
-        cp ../testfile.txt .
-	./trainManager testfile.txt
+	make
+	sudo make install
+	trainManager ../testfile.txt
 
 GITHUB REPOSITORY
-
+	git clone https://github.com/seabob/trainManager.git
 
 
