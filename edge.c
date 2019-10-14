@@ -7,7 +7,7 @@
 
 edge_t * create_edge(node_t *destination, int distance)
 {
-    edge_t *edge = malloc(sizeof(node_t));
+    edge_t *edge = malloc(sizeof(edge_t));
     if(edge == NULL)
         return NULL;
 
