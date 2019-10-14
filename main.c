@@ -11,13 +11,13 @@
 static void print_routes(train_manager_t *train_manager)
 {
     node_t *node = NULL;
-    node_t *tmp = NULL;
+    node_t *tmp_node = NULL;
     edge_t *edge = NULL;
-    edge_t *temp = NULL;
-    LIST_FOR_EACH_ENTRY_PREV_SAFE(node, tmp, &train_manager->graph.nodes,list)
+    edge_t *tmp_edge = NULL;
+    LIST_FOR_EACH_ENTRY_PREV_SAFE(node, tmp_node, &train_manager->graph.nodes,list)
     {
         printf("origin %c:\n",node->data);
-        LIST_FOR_EACH_ENTRY_PREV_SAFE(edge, temp, &node->edges, list)
+        LIST_FOR_EACH_ENTRY_PREV_SAFE(edge, tmp_edge, &node->edges, list)
         {
             printf(" -- destination [%c]\n",edge->destination->data);
         }
@@ -29,7 +29,6 @@ int main(int argv, char **argc)
     int index = -1;
     int distance = -1;
     char path[512] = {0};
-    route_t *route = NULL;
     train_manager_t train_manager;
     char test_case[TEST_CASE_LENGTH] = {0};
     

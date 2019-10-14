@@ -2,14 +2,14 @@
 #define __FILE_READER_H__
 
 #define PATH_LENGTH	512
-#define BUFFER_LENGTH	4096
+//#define BUFFER_LENGTH	4096
 
 //test case read manager
 typedef struct file_reader{
     int    fd;
     char   path[PATH_LENGTH];
-    char   buffer[BUFFER_LENGTH];
-    int    seek;
+//    char   buffer[BUFFER_LENGTH];
+//    int    seek;
 }file_reader_t;
 
 
