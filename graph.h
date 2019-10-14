@@ -1,8 +1,8 @@
 #ifndef __GRAPH_H__
 #define __GRAPH_H__
 
-#include "List.h"
-#include "Node.h"
+#include "list.h"
+#include "node.h"
 
 /*****************************************/
 /*****************GRAPH*******************/
@@ -13,8 +13,9 @@ typedef struct graph{
 }graph_t;
 
 int init_graph(graph_t *graph);
-void destroy_graph(graph_t *graph);
+void deinit_graph(graph_t *graph);
 
+//Dynamically apply for memory
 void insert_node(graph_t *graph, node_t *node);
 node_t * get_node(graph_t *graph, char data);
 

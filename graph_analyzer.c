@@ -1,15 +1,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "GraphAnalyzer.h"
-#include "Graph.h"
-#include "Node.h"
-#include "Edge.h"
+#include "graph_analyzer.h"
+#include "graph.h"
+#include "node.h"
+#include "edge.h"
 
 int init_graph_analyzer(graph_analyzer_t *ga, graph_t *graph)
 {
     ga->graph = graph;
     return 0;
+}
+
+void deinit_graph_analyzer(graph_analyzer_t *ga)
+{
+    return ;
 }
 
 graph_analyzer_t * create_graph_analyzer(graph_t *graph)
@@ -24,7 +29,6 @@ graph_analyzer_t * create_graph_analyzer(graph_t *graph)
 
 void destroy_graph_analyzer(graph_analyzer_t *ga)
 {
-    destroy_graph(ga->graph);
     free(ga);
 }
 

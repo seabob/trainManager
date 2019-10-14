@@ -1,7 +1,7 @@
 #ifndef __ROUTE_H__
 #define __ROUTE_H__
 
-#include "List.h"
+#include "list.h"
 
 typedef struct route{
     char origin;

@@ -116,4 +116,11 @@ static inline int list_empty(list_t *head)
                 &pos->member != head; \
                 pos = tmp, tmp = __CONTAINER_OF(pos->member.next, pos, member))
 
+#define LIST_FOR_EACH_ENTRY_PREV_SAFE(pos, tmp, head, member)   \
+            for(pos = __CONTAINER_OF((head)->prev, pos, member), \
+                tmp = __CONTAINER_OF(pos->member.prev, pos, member); \
+                &pos->member != head; \
+                pos = tmp, tmp = __CONTAINER_OF(pos->member.prev, pos, member))
+
+
 #endif

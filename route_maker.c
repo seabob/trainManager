@@ -1,10 +1,11 @@
-#include <malloc.h>
+#include <stdlib.h>
 
-#include "Edge.h"
-#include "Node.h"
-#include "Graph.h"
-#include "Route.h"
-#include "RouteMaker.h"
+#include "list.h"
+#include "edge.h"
+#include "node.h"
+#include "graph.h"
+#include "route.h"
+#include "route_maker.h"
 
 int init_route_maker(route_maker_t *route_maker, graph_t *graph)
 {
@@ -12,9 +13,27 @@ int init_route_maker(route_maker_t *route_maker, graph_t *graph)
     return 0;
 }
 
+void deinit_route_maker(route_maker_t *route_maker)
+{
+    node_t *node = NULL;
+    node_t *node_tmp = NULL;
+    edge_t *edge = NULL;
+    edge_t *edge_tmp = NULL;
+
+    LIST_FOR_EACH_ENTRY_PREV_SAFE(node, node_tmp, &route_maker->graph->nodes,list)
+    {
+	LIST_FOR_EACH_ENTRY_PREV_SAFE(edge, edge_tmp, &node->edges, list)
+        {
+		destroy_edge(edge);
+        }
+        destroy_node(node);
+    }
+
+    route_maker->graph = NULL;
+}
 void destroy_route_maker(route_maker_t *route_maker)
 {
-    route_maker->graph = NULL;
+    deinit_route_maker(route_maker);
 }
 
 node_t *check_or_create(route_maker_t * route_maker, char data)

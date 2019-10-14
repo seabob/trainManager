@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "Route.h"
+#include "route.h"
 
 static int __is_letter(char character)
 {
@@ -22,19 +22,13 @@ static int __is_number(char character)
 
 static int __check_raw_route(const char *raw_route)
 {
-    if(strlen(raw_route) != 3)
-        return -1;
+    int ret = 0;
+    ret += (strlen(raw_route) != 3);
+    ret += __is_letter(raw_route[0]);
+    ret += __is_letter(raw_route[1]);
+    ret+ __is_number(raw_route[2]);
 
-    if(__is_letter(raw_route[0]))
-        return 0;
-    
-    if(__is_letter(raw_route[1]))
-        return 0;
-
-    if(__is_number(raw_route[2]))
-        return 0;
-
-    return -1;
+    return ret;
 }
 
 int init_route(route_t * route, const char *raw_route)
@@ -43,7 +37,7 @@ int init_route(route_t * route, const char *raw_route)
         return -1;
     route->origin = raw_route[0];
     route->destination = raw_route[1];
-    route->distance = raw_route[2];
+    route->distance = raw_route[2] - '0';
     return 0;
 }
 

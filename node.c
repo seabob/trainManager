@@ -1,8 +1,8 @@
 #include <stdlib.h>
 
-#include "Node.h"
-#include "List.h"
-#include "Edge.h"
+#include "node.h"
+#include "list.h"
+#include "edge.h"
 
 
 node_t * create_node(char data)

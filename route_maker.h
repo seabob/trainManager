@@ -1,15 +1,16 @@
 #ifndef __ROUTE_MAKER_H__
 #define __ROUTE_MAKER_H__
 
-#include "Graph.h"
-#include "Route.h"
-#include "Node.h"
+#include "graph.h"
+#include "route.h"
+#include "node.h"
 
 typedef struct route_maker{
     graph_t *graph;
 }route_maker_t;
 
 int init_route_maker(route_maker_t *route_maker, graph_t *graph);
+void deinit_route_maker(route_maker_t *route_maker);
 route_maker_t * create_route_maker(graph_t *graph);
 void destroy_route_maker(route_maker_t *route_maker);
 

@@ -1,20 +1,20 @@
-#include <malloc.h>
+#include <stdlib.h>
 
-#include "Graph.h"
-#include "List.h"
-#include "Node.h"
+#include "graph.h"
+#include "list.h"
+#include "node.h"
 
 int init_graph(graph_t *graph)
 {
     if(graph)
     {
         init_list(&graph->nodes);
-	return -1;
+	return 0;
     }
-    return 0;
+    return -1;
 }
 
-void destroy_graph(graph_t *graph)
+void deinit_graph(graph_t *graph)
 {
     init_graph(graph);
 }

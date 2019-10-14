@@ -1,8 +1,8 @@
 #ifndef __NODE_H__
 #define __NODE_H__
 
-#include "List.h"
-#include "Edge.h"
+#include "list.h"
+#include "edge.h"
 
 typedef struct edge edge_t;
 
