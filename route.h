@@ -1,13 +1,10 @@
 #ifndef __ROUTE_H__
 #define __ROUTE_H__
 
-#include "list.h"
-
 typedef struct route{
     char origin;
     char destination;
     int distance;
-    list_t list;
 }route_t;
 
 int init_route(route_t *route, const char *raw_route);
