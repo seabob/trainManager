@@ -20,7 +20,10 @@ node_t * create_node(char data)
 void destroy_node(node_t *node)
 {
     if(node)
+    {
+        list_del(&node->list);
         free(node);
+    }
 }
 
 void set_edge(node_t *node, edge_t *edge)

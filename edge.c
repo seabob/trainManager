@@ -21,5 +21,8 @@ edge_t * create_edge(node_t *destination, int distance)
 void destroy_edge(edge_t *edge)
 {
     if(edge != NULL)
+    {
+        list_del(&edge->list);
         free(edge);
+    }
 }
