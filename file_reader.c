@@ -51,22 +51,19 @@ int get_test_case(file_reader_t *reader, char *test_case, size_t length)
 	    return ret;
 	}
 
-        if(character == ' ')
+        if(character == ',')
         {
 	    count = 0;
             memset(test_case, 0, length);
             continue;
-        }
-
-	if(character == '\r' || character == '\n')
+        }else if(character == '\r' || character == '\n')
+	{
     	    continue;
-
-	if(character == '\0')
+	}else if(character == '\0')
 	{
 	    memset(test_case, 0, length);
             return 0;
 	}
-
         
         test_case[count++] = character;
     }
