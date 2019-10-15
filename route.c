@@ -33,7 +33,7 @@ static int __check_raw_route(const char *raw_route)
 
 int init_route(route_t * route, const char *raw_route)
 {
-    if(__check_raw_route(raw_route) == -1)
+    if(__check_raw_route(raw_route) < 0)
         return -1;
     route->origin = raw_route[0];
     route->destination = raw_route[1];
