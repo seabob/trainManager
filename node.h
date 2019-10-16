@@ -12,6 +12,9 @@ typedef struct node{
     char data;
 }node_t;
 
+int init_node(node_t *node , char data);
+void deinit_node(node_t *node);
+
 node_t * create_node(char _data);
 void destroy_node(node_t *node);
 
