@@ -37,3 +37,85 @@ void destroy_graph_analyzer(graph_analyzer_t *ga)
     free(ga);
 }
 
+static int analyzer_absolute_distance(graph_analyzer_t *ga, const char *route);
+static int analyzer_shortest_route(graph_analyzer_t *ga, const char *route);
+static int analyzer_routes_scheme(graph_analyzer_t *ga, const char *route);
+static int analyzer_trips_scheme(graph_analyzer_t *ga, const char *route);
+
+//1-5 distance-ACD
+//6   trips-CC-3
+//7   routes-AC-4
+//8/9 short-AC short-BB
+//10  trips-CC-30
+
+int analyzer_graph(graph_analyzer_t *ga, const char *route)
+{
+    char algo_cmd[16] = {0};
+    char algo_route[64] = {0};
+    char algo_layer[8] = {0};
+    char *pcmd = route;
+    char *proute = route;
+    int layer = 0;
+    node_t *origin = NULL;
+    node_t *destination = NULL;
+
+    pcmd = strchr(route, '-');
+    if(!pcmd)
+    {
+        printf("cmd field error \n");
+        return -1;
+    }
+    strncpy(algo_cmd, route, pcmd - route);
+
+    proute = strchr(pcmd+1, '-');
+    if(!proute)
+    {
+        strcpy(algo_route, pcmd + 1);
+    }
+    else
+    {
+        strncpy(algo_route, pcmd + 1, proute - pcmd - 1);
+        strcpy(algo_layer, proute + 1);
+    }
+
+    printf("cmd[%s], route[%s], layer[%s]\n",algo_cmd, algo_route, algo_layer);
+    if(cmd == NULL && route ==NULL)
+        return -1;
+
+    if(strcmp(algo_cmd, "distance") == 0)
+    {
+        return ga->algo->algo_absolute_distance(ga->graph, algo_route);
+    }
+    else if(strcmp(algo_cmd, "short") == 0)
+    {
+        origin = get_node(ga->graph, algo_route[0]);
+        destination = get_node(ga->graph, algo_route[1]);
+
+        return ga->algo->algo_shortest_distance(origin, destination);
+    }
+    else if(strcmp(algo_cmd, "trips") == 0)
+    {
+        origin = get_node(ga->graph, algo_route[0]);
+        destination = get_node(ga->graph, algo_route[1]);
+        layer = atoi(algo_layer);
+        if(layer <= 0)
+            return -1;
+        return ga->algo->algo_trips_scheme(origin, destination, layer);
+    }
+    else if(strcmp(algo_cmd, "routes") == 0)
+    {
+        if(strlen(algo_route) != 2)
+            return -1; 
+        origin = get_node(ga->graph, algo_route[0]);
+        destination = get_node(ga->graph, algo_route[1]);
+        layer = atoi(algo_layer);
+        if(layer <= 0)
+            return -1;
+        
+        return ga->algo->algo_routes_scheme(origin, destination, layer);
+    }else 
+    {
+        printf("UNKNOWN CMD :%s\n",algo_cmd);
+    }
+    return -1;
+}

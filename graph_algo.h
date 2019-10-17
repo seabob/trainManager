@@ -7,7 +7,7 @@
 
 typedef struct graph_algo{
     char    algo_name[ALGO_NAME_LEN];
-    int     algo_absolute_distance(node_t *origin, node_t *destination);
+    int     algo_absolute_distance(graph_t *graph, const char *route);
     int     algo_shortest_distance(node_t *origin, node_t *destination);
     int     algo_routes_scheme(node_t *origin, node_t *destination, const int layer);
     int     algo_trips_scheme(node_t *origin, node_t *destination, const int layer);

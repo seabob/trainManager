@@ -56,9 +56,9 @@ void insert_route(train_manager_t *tm, const char *raw_route)
     add_route(&tm->route_maker, &route);
 }
 
-int get_distance(train_manager_t *tm, const char *path)
+int get_calculte(train_manager_t *tm, const char *path)
 {
-    return calculate_distance(&tm->graph_analyzer,path);
+    return analyzer_graph(&tm->graph_analyzer,path);
 }
 
 int get_testcase(train_manager_t *tm, char *test_case, size_t length)

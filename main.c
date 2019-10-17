@@ -54,7 +54,7 @@ int main(int argv, char **argc)
        if(strcmp(path,"quit") == 0)
            break;
 
-    distance = get_distance(&train_manager, path);
+    distance = get_calculate(&train_manager, path);
     if(distance != -1)
         printf("[%s]: %d\n", path,distance);
     else
