@@ -23,7 +23,7 @@ train_manager_t *create_train_manager(const char *testcase_file);
 void destroy_train_manager(train_manager_t *train_manager);
 
 void insert_route(train_manager_t *train_manager, const char * route);
-int get_calculate(train_manager_t *train_manager, const char *path);
+int get_calculate(train_manager_t *train_manager, char *path);
 
 int get_testcase(train_manager_t *train_manager, char *test_case, size_t length);
 

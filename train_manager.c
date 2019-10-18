@@ -56,7 +56,7 @@ void insert_route(train_manager_t *tm, const char *raw_route)
     add_route(&tm->route_maker, &route);
 }
 
-int get_calculte(train_manager_t *tm, const char *path)
+int get_calculate(train_manager_t *tm, char *path)
 {
     return analyzer_graph(&tm->graph_analyzer,path);
 }

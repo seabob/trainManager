@@ -1,201 +1,165 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
+#include "circular_list.h"
+#include "search_list.h"
 #include "graph_algo.h"
 #include "graph.h"
 #include "node.h"
 #include "edge.h"
 #include "list.h"
 
-static int algo_absolute_distance(graph_t *graph, const char *routes)
+static int __algo_absolute_distance(graph_t *graph, char *routes)
 {
-    node_t *current = NULL;
-    edge_t *next = NULL;
+    node_t *node = NULL;
+    edge_t *edge = NULL;
+    int length = strlen(routes);
     int sum = 0;
-    size_t lenght = strlen(routes);
     int index = 0;
 
-
-    for(index = 0; index < length; index++)
+    for(index = 0; index < length - 1 ; index++)
     {
-        current = get_node(graph, routes[index]);
-        next = get_edge(graph, routes[index+1]);
-        if(next)
-            sum += next->distance;
-        else
-            return -1;
+    	node = get_node(graph, routes[index]);
+	edge = get_edge(node, routes[index+1]);
+	if(edge)
+	{
+	    sum += edge->distance;
+	}else
+	{
+	    return -1;
+
+	}
     }
 
     return sum;
 }
 
-typedef struct __node_list{
-    node_t      *node;
-    list_t      list;
-}node_list_t;
-
-static int init_node_list(node_list_t *head, node_t *node)
+static int algo_absolute_distance(graph_t *graph, char *routes)
 {
-    if(!head)
-        return -1;
-
-    memset(head, 0, sizeof(node_list_t));
-    list_init(&head->list);
-    head->node = node;
-    return 0;
+    int sum = __algo_absolute_distance(graph, routes);
 }
 
-static void deinit_node_list(node_list_t *head)
+static int __filter_circular(edge_t *edge, circular_t *circular)
 {
-    init_node_list(head);
-    list_del(&head->list);
+	node_t *node;
+
+	LIST_FOR_EACH_ENTRY(node, &circular->circular_list, circular_list)
+	{
+		if(edge->destination == node)
+			return -1;
+	}
+	return 0;
 }
 
-static node_list_t * create_node_list(node_t *node)
+static int __algo_shortest_distance(node_t *origin, node_t *destination, circular_t *circular, int last_distance ,int cur_layer)
 {
-    node_list_t *lnode = malloc(sizeof(node_list_t));
-    if(!lnode)
-        return NULL;
-    
-    init_node_list(lnode, node);
-    return lnode;
-}
+	edge_t *edge = NULL;
+	node_t *node = NULL;
+	list_t edge_list;
+	int distance_tmp = 0;
+	int distance = 0;
+	init_list(&edge_list);
+	printf("data = %c\n", origin->data);
+	LIST_FOR_EACH_ENTRY(edge, &origin->edges, list)
+	{
+		if(__filter_circular(edge, circular) < 0)
+			continue;
+	printf("edge data = %c\n", edge->destination->data);
 
-static void destory_node_list(node_list_t *lnode)
-{
-    if(!lnode)
-        return;
-    deinit_node_list(lnode);
-    free(lnode);
-}
+		list_add(&edge->edge_list, &edge_list);
+	}
 
-static void add_node_list(node_list_t *head, node_list_t *node)
-{
-    if(head && node)
-        list_add(&node->list, &head->list);
-}
+	LIST_FOR_EACH_ENTRY(edge, &edge_list, edge_list)
+	{
+		distance_tmp = edge->distance + last_distance;
+		printf("%d -> %c\n", edge->distance,edge->destination->data );
+		if(edge->destination == destination)
+		{
+			printf("distanceTMP[%c] = %d\n",edge->destination->data,distance_tmp);
+			return distance_tmp;
+		}
 
-//breadth first
-static int __algo_shortest_distance(node_t *origin, node_t *destination, int cur_layer)
-{
-    node_list_t lnodes;
-    node_list_t *lnode_pos = NULL;
-    edge_t *edge = NULL;
-    int ret = 0;
-
-    if(list_empty(&origin->edges))
-        return ret;
-
-    init_node_list(&lnodes, NULL);
-
-    LIST_FOR_EACH_ENTRY(edge, &origin->edges, list)
-    {
-        node_list_t *lnode = NULL;
-        if(edge->destination == destination)
-        {
-            node_list_t *lnode_tmp = NULL;
-            LIST_FOR_EACH_ENTRY_SAFE(lnode, lnode_tmp, &lnodes.list, list)
-            {
-                if(lnode)
-                {
-                    destroy_node_list(lnode);
-                }
-            }
-            return cur_layer;
-        }
-        lnode = create_node_list(edge->destination);
-        if(lnode)
-            add_node_list(&lnodes, lnode);
-    }
-
-    do{
-        node_list_t *lnode_tmp = NULL;
-        LIST_FOR_EACH_ENTRY_SAFE(lnode_pos, lnode_tmp, &lnodes.list, list)
-        {
-            list_del(&lnode_pos->list);
-            ret = __algo_shortest_distance(lnode_pos->node, destination, 1 + cur_layer);
-            destroy_node_list(lnode_pos);
-            if(ret > 0)
-                return ret;
-        }
-    while(0);
-
-    return ret;
+		circular_add(circular, edge->destination);
+		distance_tmp = __algo_shortest_distance(edge->destination, destination, circular, edge->distance +last_distance, cur_layer + 1);
+		circular_del(circular, edge->destination);
+		
+		if(distance_tmp > 0)
+		{
+			if(distance > 0)
+				distance = distance < distance_tmp ? distance : distance_tmp;
+			else
+				distance = distance_tmp;
+		}
+	printf("%d->[%c]tmp = %d\n", distance,edge->destination->data,distance_tmp);
+		
+	}
+	
+	printf("distance[%c] = %d\n", edge->destination->data,distance);
+	return distance;
 }
 
 static int algo_shortest_distance(node_t *origin, node_t *destination)
 {
-    int cur_layer = __algo_shortest_distance(origin, destination, 0);
+	int distance = 0;
+	circular_t circular;
+	init_circular(&circular);
+
+	return  __algo_shortest_distance(origin, destination, &circular, distance, 0);
 }
-//depth first
-static int __search_routes_scheme(node_t *origin, node_t *destination, const int layer,
-                                            int cur_layer)
+
+static int __search_routes_scheme(node_t *origin, node_t *destination,const int layer, int cur_layer)
 {
-    node_t *node = NULL;
-    edge_t *edge = NULL;
-    int counter = 0;
+	int count = 0;
+	edge_t *edge = NULL;
 
-    if(cur_layer > layer)
-        return counter;
+	if(cur_layer >= layer)
+		return count;
 
-    if(list_empty(&origin->edges))
-        return counter;
-
-    LIST_FOR_EACH_ENTRY(edge, &origin->edges, list)
-    {
-        if(edge->destination == destination)
-            counter++;
-
-        node = edge->destination;
-        counter += __search_route_plans(edge->destination, destination,layer, 1 + cur_layer);
-    }
-    return counter;
+	LIST_FOR_EACH_ENTRY(edge, &origin->edges, list)
+	{
+		count += __search_routes_scheme(edge->destination, destination, layer, cur_layer + 1);
+		if(edge->destination == destination)
+		{
+			count += 1;
+		}
+	}
+	return count;
 }
+
 
 static int algo_routes_scheme(node_t *origin, node_t *destination, const int layer)
 {
-    int counter = 0;
     int cur_layer = 0;
-    counter += __search_route_plans(origin, destination, layer, cur_layer);
-    if(counter == 0)
+    int counter = 0;
+
+    counter += __search_routes_scheme(origin, destination, layer, cur_layer);
+    if(counter <= 0)
         return -1;
     return counter;
 }
 
 //depth first
-static int __search_trips_scheme(node_t *origin, node_t *destination, 
-                                    const int layer, int cur_layer)
+static int __search_trips_scheme(node_t *origin, node_t *destination,const int layer, int cur_layer)
 {
-    edge_t *edge = NULL;
-    int counter = 0;
+	int count = 0;
+	edge_t *edge = NULL;
+	if(cur_layer > layer)
+		return count;
 
-    if(list_empty(&origin->edges))
-        return 0;
-
-    if(layer == cur_layer)
-    {
-        LIST_FOR_EACH_ENTRY(edge, &origin->edges, list)
-        {
-            if(edge->destination = destination)
-            {
-                counter++;
-            }
-        }
-        return counter;
-    }
-    else if(layer < cur_layer)
-    {
-        LIST_FOR_EACH_ENTRY(edge, &origin->edges, list)
-        {
-            counter += __algo_travel_plans(edge->destination, destination, layer, cur_layer + 1);
-        }
-    }
-    
-    return counter;
+	LIST_FOR_EACH_ENTRY(edge, &origin->edges, list)
+	{
+		count += __search_trips_scheme(edge->destination, destination, layer, cur_layer + 1);
+		if(cur_layer == layer)
+			if(edge->destination == destination)
+				count += 1;
+	}
+	return count;
 }
+
 static int algo_trips_scheme(node_t *origin, node_t *destination, const int layer)
 {
     int cur_layer = 0;
-    int counter = __search_travel_scheme(origin, destination, layer, cur_layer);
+    int counter = __search_trips_scheme(origin, destination, layer, cur_layer);
 
     if(counter == 0)
         return -1;
@@ -203,21 +167,98 @@ static int algo_trips_scheme(node_t *origin, node_t *destination, const int laye
     return counter;
 }
 
-static graph_algo_t __defalut_graph_algo = {
-    .algo_name = "default_algo",
+static int __search_all_routes(search_t *search, node_t *destination, const int layer ,int cur_layer)
+{
+	edge_t *edge = NULL;
+	node_t *node = NULL;
+	search_t *se = malloc(sizeof(search_t));
+	list_t *list;
+	int counter = 0;
+	int i = 0;
+	memset(se,0,sizeof(search_t));
+	init_search(se);
+
+	printf("cur_layer = %d\n",cur_layer);
+	if(layer <= cur_layer)
+		return counter;
+
+	LIST_FOR_EACH_ENTRY(node, &search->search_list, search_list)
+	{
+		list_t *head = &node->edges;
+		list_t *cur = head->next;
+		while(cur != head)
+		{
+			edge = __CONTAINER_OF(cur, edge, list);
+			if(edge)
+			{
+				node = edge->destination;
+				printf("node->data = %c, edge->distance = %d\n",node->data, edge->distance);
+//				circular_add(&_search, node);
+				search_add(se, node);
+//				printf("%s:%d\n",__func__,__LINE__);
+			}
+			cur = cur->next;
+		}
+	}
+/*
+	LIST_FOR_EACH_ENTRY(node, &search->circular_list, circular_list)
+	{
+		printf("node data = %c, i = %d\n",node->data,i);
+		i = 0;
+//		for(list = node->edges.next; list != &node->edges ; list = list->next)
+		LIST_FOR_EACH_ENTRY(edge, &node->edges, list)
+		{
+			i++;
+//			if(edge->destination == destination)
+//			{
+//				printf("data = %c\n",edge->destination);
+//				counter++;
+//			}
+			search_add(&_search, edge->destination);
+		}
+	}
+*/
+
+//	counter += __search_all_routes(&_search, destination, layer, cur_layer+1);
+	return counter ;
+}
+
+
+static int algo_all_routes(node_t *origin, node_t *destination, const int layer)
+{
+	int counter = 0;
+	search_t search;
+	node_t *node;
+	edge_t *edge;
+	memset(&search, 0,sizeof(search_t));
+	init_search(&search);
+	search_add(&search, origin);
+
+	counter += __search_all_routes(&search, destination, layer, 0);
+
+	if(counter <= 0)
+		return -1;
+
+	return counter;
+}
+
+
+static graph_algo_t __default_graph_algo = {
     .algo_absolute_distance = algo_absolute_distance,
     .algo_shortest_distance = algo_shortest_distance,
     .algo_routes_scheme = algo_routes_scheme,
     .algo_trips_scheme = algo_trips_scheme,
+    .algo_all_routes = algo_all_routes,
 };
 
 int init_graph_algo(graph_algo_t *algo)
 {
-    algo = &__default_graph_algo;
+    memset(algo, 0, sizeof(graph_algo_t));
+    memcpy(algo, &__default_graph_algo, sizeof(graph_algo_t));
     return 0;
 }
 
-void dinit_graph_algo(graph_algo_t *algo)
+void deinit_graph_algo(graph_algo_t *algo)
 {
     memset(algo, 0, sizeof(graph_algo_t));
 }

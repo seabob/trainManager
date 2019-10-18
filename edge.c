@@ -13,6 +13,7 @@ edge_t * create_edge(node_t *destination, int distance)
 
     memset(edge, 0, sizeof(edge));
     init_list(&edge->list);
+    init_list(&edge->edge_list);
     edge->destination = destination;
     edge->distance = distance;
     return edge;
@@ -23,6 +24,7 @@ void destroy_edge(edge_t *edge)
     if(edge != NULL)
     {
         list_del(&edge->list);
+        list_del(&edge->edge_list);
         free(edge);
     }
 }

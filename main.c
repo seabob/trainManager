@@ -19,7 +19,7 @@ static void print_routes(train_manager_t *train_manager)
         printf("origin %c:\n",node->data);
         LIST_FOR_EACH_ENTRY_PREV_SAFE(edge, tmp_edge, &node->edges, list)
         {
-            printf(" -- destination [%c]\n",edge->destination->data);
+            printf(" -%c- destination [%d] \n",edge->destination->data, edge->distance);
         }
     }
 }
@@ -53,7 +53,6 @@ int main(int argv, char **argc)
 
        if(strcmp(path,"quit") == 0)
            break;
-
     distance = get_calculate(&train_manager, path);
     if(distance != -1)
         printf("[%s]: %d\n", path,distance);

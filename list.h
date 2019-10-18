@@ -63,20 +63,15 @@ static inline int list_empty(list_t *head)
  * @param member Member name of the struct list_head field in the list element.
  * @return A pointer to the data struct containing the list head.
  */
-#ifndef CONTAINER_OF
 #define CONTAINER_OF(ptr, type, member) \
             (type *)((char*)(ptr) - (char *) &((type *)0)->member)
-#endif
 
 /**
  * Alias of CONTAINER_OF
  */
 
-#ifndef LIST_ENTRY
 #define LIST_ENTRY(ptr, type, member) \
             CONTAINER_OF(ptr, type, member)
-#endif
-
 
 #define __CONTAINER_OF(ptr, sample, member) \
             CONTAINER_OF((ptr), typeof(*(sample)), member)
@@ -99,8 +94,8 @@ static inline int list_empty(list_t *head)
  *
  */
 #define LIST_FOR_EACH_ENTRY(pos, head, member) \
-            for((pos = __CONTAINER_OF((head)->next), pos, member)  \
-                &pos->member != head;                           \
+            for((pos = __CONTAINER_OF((head)->next, pos, member)); \
+                &pos->member != head; \
                 pos = __CONTAINER_OF(pos->member.next, pos, member))
 
 /**
@@ -115,6 +110,20 @@ static inline int list_empty(list_t *head)
                 tmp = __CONTAINER_OF(pos->member.next, pos, member); \
                 &pos->member != head; \
                 pos = tmp, tmp = __CONTAINER_OF(pos->member.next, pos, member))
+
+#define LIST_FOR_EACH_ENTRY_SAFE_ONE(pos, tmp, head, member)   \
+            for(pos = __CONTAINER_OF((head)->next, pos, member), \
+                tmp = __CONTAINER_OF(pos->member.next, pos, member); \
+                &tmp->member != head; \
+                pos = tmp, tmp = __CONTAINER_OF(pos->member.next, pos, member))
+
+#define LIST_FOR_EACH_ENTRY_SAFE_ONE_A(pos, tmp, begin, head, member)   \
+            for(pos = __CONTAINER_OF((begin)->next, pos, member), \
+                tmp = __CONTAINER_OF(pos->member.next, pos, member); \
+                &tmp->member != head; \
+                pos = tmp, tmp = __CONTAINER_OF(pos->member.next, pos, member))
+
+
 
 #define LIST_FOR_EACH_ENTRY_PREV_SAFE(pos, tmp, head, member)   \
             for(pos = __CONTAINER_OF((head)->prev, pos, member), \

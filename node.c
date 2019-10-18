@@ -1,5 +1,6 @@
 #include <stdlib.h>
 
+#include "circular_list.h"
 #include "node.h"
 #include "list.h"
 #include "edge.h"
@@ -11,6 +12,9 @@ int init_node(node_t *node, char data)
 
     node->data = data;
     init_list(&node->edges);
+    init_list(&node->list);
+    init_list(&node->search_list);
+    init_list(&node->circular_list);
     return 0;
 }
 

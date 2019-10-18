@@ -8,6 +8,7 @@ typedef struct node node_t;
 
 //Graph's Edge
 typedef struct edge{
+    list_t edge_list;
     list_t list;
     node_t *destination;
     int distance;

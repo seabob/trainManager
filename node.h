@@ -9,6 +9,8 @@ typedef struct edge edge_t;
 typedef struct node{
     list_t edges;
     list_t list;
+    list_t search_list;
+    list_t circular_list;
     char data;
 }node_t;
 

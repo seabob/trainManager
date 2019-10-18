@@ -51,7 +51,7 @@ int get_test_case(file_reader_t *reader, char *test_case, size_t length)
 	    return ret;
 	}
 
-        if(character == ',')
+        if(character == ',' || character == ' ')
         {
 	    count = 0;
             memset(test_case, 0, length);

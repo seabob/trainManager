@@ -15,7 +15,6 @@ typedef struct graph{
 int init_graph(graph_t *graph);
 void deinit_graph(graph_t *graph);
 
-//Dynamically apply for memory
 void insert_node(graph_t *graph, node_t *node);
 node_t * get_node(graph_t *graph, char data);
 
