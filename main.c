@@ -3,8 +3,6 @@
 
 #include "train_manager.h"
 
-#include "list.h"
-
 #define TEST_CASE_LENGTH	4
 
 static void print_usage(void)

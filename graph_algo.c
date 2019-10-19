@@ -27,7 +27,6 @@ static int __algo_absolute_distance(graph_t *graph, const char *routes)
 	}else
 	{
 	    return -1;
-
 	}
     }
 
@@ -144,40 +143,6 @@ static int algo_trips_scheme(node_t *origin, node_t *destination, const int laye
         return -1;
 
     return counter;
-}
-
-typedef struct node_distance_struct{
-	node_t *node;
-	int	distance;
-}node_distance_t;
-
-static int init_node_distance(node_distance_t *node_distance, node_t *node, int distance)
-{
-	node_distance->node = node;
-	node_distance->distance = distance;
-	return 1;
-}
-
-static node_distance_t *create_node_distance(node_t *node, int distance)
-{
-	node_distance_t *node_distance = malloc(sizeof(node_distance_t));
-	if(!node_distance)
-		return node_distance;
-
-	memset(node_distance, 0, sizeof(node_distance_t));
-	node_distance->node = node;
-	node_distance->distance = distance;
-	return node_distance;
-}
-
-static node_distance_t *create_node_distance_copy(node_distance_t *node_distance)
-{
-	node_distance_t *_node_distance = malloc(sizeof(node_distance_t));
-	if(!_node_distance)
-		return NULL;
-	
-	memcpy(_node_distance, node_distance, sizeof(node_distance_t));
-	return _node_distance;
 }
 
 static int __search_all_routes(vector_t *vector, node_t *destination, const int distance ,int cur_layer)
