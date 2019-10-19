@@ -38,11 +38,7 @@ void circular_add(circular_t *circular, node_t *node)
 	node_t *ptr;
 	if(circular && node)
 	{
-		printf("%s:%d node->circular_list = 0x%x, circular = 0x%x\n",__func__,__LINE__,&node->circular_list, &circular->circular_list);
 		list_add(&node->circular_list, &circular->circular_list);
-		printf("%s:%d data = %c\n",__func__,__LINE__,node->data);
-		printf("%s:%d data = %c\n",__func__,__LINE__,node->data);
-		printf("%s:%d data = %c\n",__func__,__LINE__,node->data);
 	}
 }
 

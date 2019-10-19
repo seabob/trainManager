@@ -9,7 +9,7 @@
 #include "edge.h"
 #include "list.h"
 
-static int __algo_absolute_distance(graph_t *graph, char *routes)
+static int __algo_absolute_distance(graph_t *graph, const char *routes)
 {
     node_t *node = NULL;
     edge_t *edge = NULL;
@@ -34,7 +34,7 @@ static int __algo_absolute_distance(graph_t *graph, char *routes)
     return sum;
 }
 
-static int algo_absolute_distance(graph_t *graph, char *routes)
+static int algo_absolute_distance(graph_t *graph, const char *routes)
 {
     int sum = __algo_absolute_distance(graph, routes);
 }
