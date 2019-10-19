@@ -35,7 +35,6 @@ void deinit_circular(circular_t *circular)
 
 void circular_add(circular_t *circular, node_t *node)
 {
-	node_t *ptr;
 	if(circular && node)
 	{
 		list_add(&node->circular_list, &circular->circular_list);

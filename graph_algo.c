@@ -17,7 +17,7 @@ static int __algo_absolute_distance(graph_t *graph, const char *routes)
     int sum = 0;
     int index = 0;
 
-    for(index = 0; index < length - 1 ; index++)
+    for(index = 0; index < length-1; index++)
     {
     	node = get_node(graph, routes[index]);
 	edge = get_edge(node, routes[index+1]);
@@ -36,7 +36,7 @@ static int __algo_absolute_distance(graph_t *graph, const char *routes)
 
 static int algo_absolute_distance(graph_t *graph, const char *routes)
 {
-    int sum = __algo_absolute_distance(graph, routes);
+    return __algo_absolute_distance(graph, routes);
 }
 
 static int __algo_shortest_distance(node_t *origin, node_t *destination, stack_t *stack, int last_distance, int cur_layer)
@@ -80,62 +80,11 @@ static int __algo_shortest_distance(node_t *origin, node_t *destination, stack_t
 
 static int algo_shortest_distance(node_t *origin, node_t *destination)
 {
-	int distance = 0;
 	stack_t stack;
 	init_stack(&stack);
 
 	return  __algo_shortest_distance(origin, destination, &stack, 0, 0);
 }
-
-#if 0
-static int __algo_shortest_distance(node_t *origin, node_t *destination, circular_t *circular, int last_distance ,int cur_layer)
-{
-	edge_t *edge = NULL;
-	node_t *node = NULL;
-	list_t edge_list;
-	int distance_tmp = 0;
-	int distance = 0;
-	init_list(&edge_list);
-	LIST_FOR_EACH_ENTRY(edge, &origin->edges, list)
-	{
-		if(__filter_circular(edge, circular) < 0)
-			continue;
-
-		list_add(&edge->edge_list, &edge_list);
-	}
-
-	LIST_FOR_EACH_ENTRY(edge, &edge_list, edge_list)
-	{
-		distance_tmp = edge->distance + last_distance;
-		if(edge->destination == destination)
-			return distance_tmp;
-
-		circular_add(circular, edge->destination);
-		distance_tmp = __algo_shortest_distance(edge->destination, destination, circular, edge->distance +last_distance, cur_layer + 1);
-		circular_del(circular, edge->destination);
-		
-		if(distance_tmp > 0)
-		{
-			if(distance > 0)
-				distance = distance < distance_tmp ? distance : distance_tmp;
-			else
-				distance = distance_tmp;
-		}
-		
-	}
-	
-	return distance;
-}
-
-static int algo_shortest_distance(node_t *origin, node_t *destination)
-{
-	int distance = 0;
-	circular_t circular;
-	init_circular(&circular);
-
-	return  __algo_shortest_distance(origin, destination, &circular, distance, 0);
-}
-#endif
 
 static int __search_routes_scheme(node_t *origin, node_t *destination,const int layer, int cur_layer)
 {
@@ -238,9 +187,7 @@ static int __search_all_routes(vector_t *vector, node_t *destination, const int 
 	node_distance_t *node_distance = NULL;
 	store_node_t *vnode = NULL;
 	vector_t node_vector;
-	list_t *list;
 	int counter = 0;
-	int i = 0;
 
 	memset(&node_vector, 0 ,sizeof(vector_t));
 	init_vector(&node_vector);
@@ -299,9 +246,6 @@ static int algo_all_routes(node_t *origin, node_t *destination, const int distan
 	vector_t node_vector;
 	store_node_t *vnode;
 	node_distance_t *node_distance;
-	
-	node_t *node;
-	edge_t *edge;
 
 	node_distance = create_node_distance(origin, 0);
 	if(!node_distance)

@@ -26,7 +26,6 @@ static void print_routes(train_manager_t *train_manager)
 
 int main(int argv, char **argc)
 {
-    int index = -1;
     int distance = -1;
     char path[512] = {0};
     train_manager_t train_manager;
@@ -49,7 +48,8 @@ int main(int argv, char **argc)
    {
        printf("input path:\n");
        memset(path,0,512);
-       scanf("%s",path);
+	gets(path);
+
 
        if(strcmp(path,"quit") == 0)
            break;
@@ -57,7 +57,7 @@ int main(int argv, char **argc)
     if(distance != -1)
         printf("[%s]: %d\n", path,distance);
     else
-        printf("[%s]: path fail\n",path);
+        printf("[%s]: NO SUCH ROUTE\n",path);
     }
 
     deinit_train_manager(&train_manager);

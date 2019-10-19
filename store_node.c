@@ -10,7 +10,9 @@ int init_store_node(store_node_t *node, void * data)
 		init_list(&node->list);
 		return 0;
 	}
+	return -1;
 }
+
 void deinit_store_node(store_node_t *node)
 {
     if(node)
