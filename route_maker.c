@@ -20,9 +20,9 @@ void deinit_route_maker(route_maker_t *route_maker)
     edge_t *edge = NULL;
     edge_t *edge_tmp = NULL;
 
-    LIST_FOR_EACH_ENTRY_PREV_SAFE(node, node_tmp, &route_maker->graph->nodes,list)
+    LIST_FOR_EACH_ENTRY_SAFE(node, node_tmp, &route_maker->graph->nodes,list)
     {
-	LIST_FOR_EACH_ENTRY_PREV_SAFE(edge, edge_tmp, &node->edges, list)
+	LIST_FOR_EACH_ENTRY_SAFE(edge, edge_tmp, &node->edges, list)
         {
 		destroy_edge(edge);
         }

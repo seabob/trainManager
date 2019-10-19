@@ -59,12 +59,10 @@ static int __algo_shortest_distance(node_t *origin, node_t *destination, circula
 	int distance_tmp = 0;
 	int distance = 0;
 	init_list(&edge_list);
-	printf("data = %c\n", origin->data);
 	LIST_FOR_EACH_ENTRY(edge, &origin->edges, list)
 	{
 		if(__filter_circular(edge, circular) < 0)
 			continue;
-	printf("edge data = %c\n", edge->destination->data);
 
 		list_add(&edge->edge_list, &edge_list);
 	}
@@ -72,12 +70,8 @@ static int __algo_shortest_distance(node_t *origin, node_t *destination, circula
 	LIST_FOR_EACH_ENTRY(edge, &edge_list, edge_list)
 	{
 		distance_tmp = edge->distance + last_distance;
-		printf("%d -> %c\n", edge->distance,edge->destination->data );
 		if(edge->destination == destination)
-		{
-			printf("distanceTMP[%c] = %d\n",edge->destination->data,distance_tmp);
 			return distance_tmp;
-		}
 
 		circular_add(circular, edge->destination);
 		distance_tmp = __algo_shortest_distance(edge->destination, destination, circular, edge->distance +last_distance, cur_layer + 1);
@@ -90,11 +84,9 @@ static int __algo_shortest_distance(node_t *origin, node_t *destination, circula
 			else
 				distance = distance_tmp;
 		}
-	printf("%d->[%c]tmp = %d\n", distance,edge->destination->data,distance_tmp);
 		
 	}
 	
-	printf("distance[%c] = %d\n", edge->destination->data,distance);
 	return distance;
 }
 
@@ -186,7 +178,6 @@ static node_distance_t *create_node_distance(node_t *node, int distance)
 		return node_distance;
 
 	memset(node_distance, 0, sizeof(node_distance_t));
-	printf("%s:%d distance = %d\n",__func__,__LINE__,distance);
 	node_distance->node = node;
 	node_distance->distance = distance;
 	return node_distance;
@@ -227,7 +218,11 @@ static int __search_all_routes(vector_t *vector, node_t *destination, const int 
 		
 		node_distance = (node_distance_t*)vnode->data;
 		if(node_distance->distance >= distance)
+		{
+			free(node_distance);
+			free(vnode);
 			continue;
+		}
 
 		node = node_distance->node;
 		LIST_FOR_EACH_ENTRY(edge, &node->edges, list)
@@ -251,6 +246,8 @@ static int __search_all_routes(vector_t *vector, node_t *destination, const int 
 
 			vector_push(&node_vector, vnode_tmp);
 		}
+		free(node_distance);
+		free(vnode);
 	}
 
 	counter += __search_all_routes(&node_vector, destination, distance, cur_layer+1);

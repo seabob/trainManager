@@ -29,12 +29,10 @@ vector_node_t* vector_pop(vector_t *vector)
 {
 	if(list_empty(&vector->list))
 	{
-		printf("%s:%d list_empty1\n",__func__,__LINE__);
 		return NULL;
 	}
 	list_t *list = vector->list.next;
 	vector_node_t *node = LIST_ENTRY(list, vector_node_t, list);
-	printf("%s:%d vector_node addr = 0x%x\n",__func__,__LINE__,node);
 	list_del(list);
 	return node;
 }

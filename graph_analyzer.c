@@ -39,10 +39,10 @@ void destroy_graph_analyzer(graph_analyzer_t *ga)
 }
 
 //1-5 distance-ACD
-//6   trips-CC-3
-//7   routes-AC-4
+//6   routes-CC-3
+//7   trips-AC-4
 //8/9 short-AC short-BB
-//10  trips-CC-30
+//10  allroutes-CC-30
 
 int analyzer_graph(graph_analyzer_t *ga, char *route)
 {

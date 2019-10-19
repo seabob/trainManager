@@ -46,8 +46,8 @@ static inline void __list_del(list_t *prev, list_t *next)
 static inline void list_del(list_t *entry)
 {
 //    __list_del(entry->prev, entry->next);
-	entry->prev->next = entry->next;
 	entry->next->prev = entry->prev;
+	entry->prev->next = entry->next;
 	entry->next = entry;
 	entry->prev = entry;
 //    init_list(entry);
