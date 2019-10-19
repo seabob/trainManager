@@ -13,3 +13,7 @@ GITHUB REPOSITORY
 	git clone https://github.com/seabob/trainManager.git
 
 
+TEST
+    MEMCHECK
+	valgrind --tool=memcheck ./trainsManager ../testfile.txt
+

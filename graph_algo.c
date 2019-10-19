@@ -3,6 +3,7 @@
 #include <string.h>
 #include "vector.h"
 #include "stack.h"
+#include "node_distance.h"
 #include "graph_algo.h"
 #include "graph.h"
 #include "node.h"
@@ -224,15 +225,6 @@ static int algo_all_routes(node_t *origin, node_t *destination, const int distan
 	init_vector(&node_vector);
 	vector_push(&node_vector, vnode);
 
-#if 0
-	vnode = vector_pop(&node_vector);
-	printf("%s:%d vnode addr = 0x%x\n",__func__,__LINE__,vnode);
-
-	node_distance = (store_distance_t*)vnode->data;
-	printf("%s:%d node_distance addr = 0x%x\n",__func__,__LINE__,node_distance);
-	printf("%s:%d data[%c] ditance = %d\n",__func__,__LINE__,node_distance->node->data, node_distance->distance);
-	vector_push(&node_vector, vnode);
-#endif
 	counter += __search_all_routes(&node_vector, destination, distance, 0);
 
 	if(counter <= 0)
