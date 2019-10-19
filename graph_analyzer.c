@@ -75,7 +75,7 @@ int analyzer_graph(graph_analyzer_t *ga, char *route)
 	layer = atoi(algo_layer);
     }
 
-    printf("cmd[%s], route[%s], layer[%s]\n",algo_cmd, algo_route, algo_layer);
+  //  printf("cmd[%s], route[%s], layer[%s]\n",algo_cmd, algo_route, algo_layer);
 
     if(strlen(algo_route) < 2)
    	return -1;
@@ -92,7 +92,7 @@ int analyzer_graph(graph_analyzer_t *ga, char *route)
 
         return ga->algo.algo_shortest_distance(origin, destination);
     }
-    else if(strcmp(algo_cmd, "trips") == 0)
+    else if(strcmp(algo_cmd, "trip") == 0)
     {
 	layer = atoi(algo_layer);
 	if(layer <= 0)

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "train_manager.h"
 #include "graph.h"
@@ -64,4 +65,24 @@ int get_calculate(train_manager_t *tm, char *path)
 int get_testcase(train_manager_t *tm, char *test_case, size_t length)
 {
     return get_test_case(&tm->reader, test_case, length);
+}
+
+
+//Show all route and relation
+void print_routes(train_manager_t *train_manager)
+{
+    node_t *node = NULL;
+    node_t *tmp_node = NULL;
+    edge_t *edge = NULL;
+    edge_t *tmp_edge = NULL;
+    printf("\n----------graph struction----------\n");
+    LIST_FOR_EACH_ENTRY_PREV_SAFE(node, tmp_node, &train_manager->graph.nodes,list)
+    {
+        printf("origin %c:\n",node->data);
+        LIST_FOR_EACH_ENTRY_PREV_SAFE(edge, tmp_edge, &node->edges, list)
+        {
+            printf(" -%c- destination [%d] \n",edge->destination->data, edge->distance);
+        }
+    }
+    printf("\n-----------------------------------\n");
 }

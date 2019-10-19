@@ -7,27 +7,33 @@
 
 #define TEST_CASE_LENGTH	4
 
-//Show all route and relation
-static void print_routes(train_manager_t *train_manager)
+static void print_usage(void)
 {
-    node_t *node = NULL;
-    node_t *tmp_node = NULL;
-    edge_t *edge = NULL;
-    edge_t *tmp_edge = NULL;
-    LIST_FOR_EACH_ENTRY_PREV_SAFE(node, tmp_node, &train_manager->graph.nodes,list)
-    {
-        printf("origin %c:\n",node->data);
-        LIST_FOR_EACH_ENTRY_PREV_SAFE(edge, tmp_edge, &node->edges, list)
-        {
-            printf(" -%c- destination [%d] \n",edge->destination->data, edge->distance);
-        }
-    }
+	printf("\n*************************usage***********************************\n");
+	printf("cmd [show/s]: show graph struction.\n");
+	printf("cmd [help/h]: show this  usage.\n");
+	printf("for quit to execute [quit] [exit] [q].\n");
+	printf("\ncmd [distance]: calcular route distance.\n");
+	printf("\tfor Example: distance ABC\n");
+	printf("\ncmd [route]: calcular all route between param and limit by layer.\n");
+	printf("\tfor Example: route CC 3\n");
+	printf("\ncmd [trip]: calcular route with statin count between param and limit by layer,\n");
+	printf("\tfor Example: trip AC 4\n");
+	printf("\ncmd [short]: calcular shortest route distance by param\n");
+	printf("\tfor Example: short BB\n");
+	printf("\ncmd [allroute]: calcular all route station count by param\n");
+	printf("\tfor Example: allroute CC 30\n\n");
+	printf("\t\tformat:\n");
+	printf("\t\t\t[cmd]  [param]  <layer>\n");
+	printf("\t\t\troute     CC       3\n");
+	printf("****************************************************************\n\n");
+	
 }
 
 int main(int argv, char **argc)
 {
     int distance = -1;
-    char path[512] = {0};
+    char path[32] = {0};
     train_manager_t train_manager;
     char test_case[TEST_CASE_LENGTH] = {0};
     
@@ -39,25 +45,38 @@ int main(int argv, char **argc)
     }
 
 #if 1
-    print_routes(&train_manager);
+    print_usage();
 #endif
 
-   printf("\n*** Example: A-B-D-C ***\n\n");
 
    for(;;)
    {
-       printf("input path:\n");
-       memset(path,0,512);
-	gets(path);
+        printf("input path:\n");
+        memset(path,0,32);
+	fgets(path, 32, stdin);
+	path[strlen(path) - 1] = '\0';
 
-
-       if(strcmp(path,"quit") == 0)
-           break;
-    distance = get_calculate(&train_manager, path);
-    if(distance != -1)
-        printf("[%s]: %d\n", path,distance);
-    else
-        printf("[%s]: NO SUCH ROUTE\n",path);
+        if(!strcmp(path,"quit") || !strcmp(path, "exit") || !strcmp(path, "q"))
+	{
+	    break;
+	}
+        else if(!strcmp(path, "show") || !strcmp(path, "s"))
+	{
+	    print_routes(&train_manager);
+	    continue;
+	}
+	else if(!strcmp(path, "help") || !strcmp(path, "h"))
+	{
+	    print_usage();
+	    continue;
+	}else
+	{
+    	    distance = get_calculate(&train_manager, path);
+            if(distance > 0)
+                printf("[result]: %d\n", distance);
+            else
+                printf("[result]: NO SUCH ROUTE\n");
+	}
     }
 
     deinit_train_manager(&train_manager);
