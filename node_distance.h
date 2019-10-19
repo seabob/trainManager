@@ -1,6 +1,7 @@
 #ifndef __NODE_DISTANCE_H__
 #define __NODE_DISTANCE_H__
 
+#include "node.h"
 typedef struct node_distance_struct{
         node_t *node;
         int     distance;

@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "circular_list.h"
 #include "vector.h"
+#include "stack.h"
 #include "graph_algo.h"
 #include "graph.h"
 #include "node.h"
@@ -39,18 +39,55 @@ static int algo_absolute_distance(graph_t *graph, const char *routes)
     int sum = __algo_absolute_distance(graph, routes);
 }
 
-static int __filter_circular(edge_t *edge, circular_t *circular)
+static int __algo_shortest_distance(node_t *origin, node_t *destination, stack_t *stack, int last_distance, int cur_layer)
 {
-	node_t *node;
+	edge_t *edge = NULL;
+	node_t *node = NULL;
+	store_node_t store_node;
+	store_node_t *vnode;
+	int distance = 0;
+	int distance_tmp = 0;
 
-	LIST_FOR_EACH_ENTRY(node, &circular->circular_list, circular_list)
+	LIST_FOR_EACH_ENTRY(vnode, &stack->list, list)
 	{
-		if(edge->destination == node)
-			return -1;
+		node = (node_t*)vnode->data;
+		if(node == origin)
+			return 0;
 	}
-	return 0;
+
+	init_store_node(&store_node, (void*)origin);	
+	stack_push(stack, &store_node);
+	LIST_FOR_EACH_ENTRY(edge, &origin->edges, list)	
+	{
+		if(edge->destination == destination)
+		{
+			distance = edge->distance + last_distance;
+			continue;
+		}
+		
+		distance_tmp = __algo_shortest_distance(edge->destination, destination, stack, last_distance + edge->distance, cur_layer + 1);
+		if(distance_tmp > 0)
+		{
+			if(distance > 0)
+				distance = distance < distance_tmp ? distance : distance_tmp;
+			else
+				distance = distance_tmp;
+		}
+	}
+	stack_pop(stack);
+	return distance;
 }
 
+static int algo_shortest_distance(node_t *origin, node_t *destination)
+{
+	int distance = 0;
+	stack_t stack;
+	init_stack(&stack);
+
+	return  __algo_shortest_distance(origin, destination, &stack, 0, 0);
+}
+
+#if 0
 static int __algo_shortest_distance(node_t *origin, node_t *destination, circular_t *circular, int last_distance ,int cur_layer)
 {
 	edge_t *edge = NULL;
@@ -98,6 +135,7 @@ static int algo_shortest_distance(node_t *origin, node_t *destination)
 
 	return  __algo_shortest_distance(origin, destination, &circular, distance, 0);
 }
+#endif
 
 static int __search_routes_scheme(node_t *origin, node_t *destination,const int layer, int cur_layer)
 {
@@ -198,7 +236,7 @@ static int __search_all_routes(vector_t *vector, node_t *destination, const int 
 	edge_t *edge = NULL;
 	node_t *node = NULL;
 	node_distance_t *node_distance = NULL;
-	vector_node_t *vnode = NULL;
+	store_node_t *vnode = NULL;
 	vector_t node_vector;
 	list_t *list;
 	int counter = 0;
@@ -229,7 +267,7 @@ static int __search_all_routes(vector_t *vector, node_t *destination, const int 
 		{
 			node_distance_t _node_distance;
 			node_distance_t *ptr_node_distance = NULL;
-			vector_node_t *vnode_tmp = NULL;
+			store_node_t *vnode_tmp = NULL;
 			if(edge->destination == destination && distance > (edge->distance + node_distance->distance))
 				counter++;
 			init_node_distance(&_node_distance, edge->destination, edge->distance + node_distance->distance);
@@ -240,7 +278,7 @@ static int __search_all_routes(vector_t *vector, node_t *destination, const int 
 			if(!ptr_node_distance)
 				continue;
 
-			vnode_tmp = create_vector_node((void*)ptr_node_distance);
+			vnode_tmp = create_store_node((void*)ptr_node_distance);
 			if(!vnode_tmp)
 				continue;
 
@@ -259,7 +297,7 @@ static int algo_all_routes(node_t *origin, node_t *destination, const int distan
 {
 	int counter = 0;
 	vector_t node_vector;
-	vector_node_t *vnode;
+	store_node_t *vnode;
 	node_distance_t *node_distance;
 	
 	node_t *node;
@@ -269,7 +307,7 @@ static int algo_all_routes(node_t *origin, node_t *destination, const int distan
 	if(!node_distance)
 		return -1;
 
-	vnode = create_vector_node((void *)node_distance);
+	vnode = create_store_node((void *)node_distance);
 	if(!vnode)
 		return -1;
 
@@ -281,7 +319,7 @@ static int algo_all_routes(node_t *origin, node_t *destination, const int distan
 	vnode = vector_pop(&node_vector);
 	printf("%s:%d vnode addr = 0x%x\n",__func__,__LINE__,vnode);
 
-	node_distance = (node_distance_t*)vnode->data;
+	node_distance = (store_distance_t*)vnode->data;
 	printf("%s:%d node_distance addr = 0x%x\n",__func__,__LINE__,node_distance);
 	printf("%s:%d data[%c] ditance = %d\n",__func__,__LINE__,node_distance->node->data, node_distance->distance);
 	vector_push(&node_vector, vnode);
