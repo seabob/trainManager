@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "circular_list.h"
-#include "search_list.h"
+#include "vector.h"
 #include "graph_algo.h"
 #include "graph.h"
 #include "node.h"
@@ -167,74 +167,129 @@ static int algo_trips_scheme(node_t *origin, node_t *destination, const int laye
     return counter;
 }
 
-static int __search_all_routes(search_t *search, node_t *destination, const int layer ,int cur_layer)
+typedef struct node_distance_struct{
+	node_t *node;
+	int	distance;
+}node_distance_t;
+
+static int init_node_distance(node_distance_t *node_distance, node_t *node, int distance)
+{
+	node_distance->node = node;
+	node_distance->distance = distance;
+	return 1;
+}
+
+static node_distance_t *create_node_distance(node_t *node, int distance)
+{
+	node_distance_t *node_distance = malloc(sizeof(node_distance_t));
+	if(!node_distance)
+		return node_distance;
+
+	memset(node_distance, 0, sizeof(node_distance_t));
+	printf("%s:%d distance = %d\n",__func__,__LINE__,distance);
+	node_distance->node = node;
+	node_distance->distance = distance;
+	return node_distance;
+}
+
+static node_distance_t *create_node_distance_copy(node_distance_t *node_distance)
+{
+	node_distance_t *_node_distance = malloc(sizeof(node_distance_t));
+	if(!_node_distance)
+		return NULL;
+	
+	memcpy(_node_distance, node_distance, sizeof(node_distance_t));
+	return _node_distance;
+}
+
+static int __search_all_routes(vector_t *vector, node_t *destination, const int distance ,int cur_layer)
 {
 	edge_t *edge = NULL;
 	node_t *node = NULL;
-	search_t *se = malloc(sizeof(search_t));
+	node_distance_t *node_distance = NULL;
+	vector_node_t *vnode = NULL;
+	vector_t node_vector;
 	list_t *list;
 	int counter = 0;
 	int i = 0;
-	memset(se,0,sizeof(search_t));
-	init_search(se);
 
-	printf("cur_layer = %d\n",cur_layer);
-	if(layer <= cur_layer)
+	memset(&node_vector, 0 ,sizeof(vector_t));
+	init_vector(&node_vector);
+
+	if(vector_empty(vector))
 		return counter;
 
-	LIST_FOR_EACH_ENTRY(node, &search->search_list, search_list)
+	while(!vector_empty(vector))
 	{
-		list_t *head = &node->edges;
-		list_t *cur = head->next;
-		while(cur != head)
-		{
-			edge = __CONTAINER_OF(cur, edge, list);
-			if(edge)
-			{
-				node = edge->destination;
-				printf("node->data = %c, edge->distance = %d\n",node->data, edge->distance);
-//				circular_add(&_search, node);
-				search_add(se, node);
-//				printf("%s:%d\n",__func__,__LINE__);
-			}
-			cur = cur->next;
-		}
-	}
-/*
-	LIST_FOR_EACH_ENTRY(node, &search->circular_list, circular_list)
-	{
-		printf("node data = %c, i = %d\n",node->data,i);
-		i = 0;
-//		for(list = node->edges.next; list != &node->edges ; list = list->next)
+		vnode = vector_pop(vector);
+		if(vnode == NULL)
+			continue;
+		
+		node_distance = (node_distance_t*)vnode->data;
+		if(node_distance->distance >= distance)
+			continue;
+
+		node = node_distance->node;
 		LIST_FOR_EACH_ENTRY(edge, &node->edges, list)
 		{
-			i++;
-//			if(edge->destination == destination)
-//			{
-//				printf("data = %c\n",edge->destination);
-//				counter++;
-//			}
-			search_add(&_search, edge->destination);
+			node_distance_t _node_distance;
+			node_distance_t *ptr_node_distance = NULL;
+			vector_node_t *vnode_tmp = NULL;
+			if(edge->destination == destination && distance > (edge->distance + node_distance->distance))
+				counter++;
+			init_node_distance(&_node_distance, edge->destination, edge->distance + node_distance->distance);
+			if(_node_distance.distance > distance)
+				continue;
+
+			ptr_node_distance = create_node_distance_copy(&_node_distance);
+			if(!ptr_node_distance)
+				continue;
+
+			vnode_tmp = create_vector_node((void*)ptr_node_distance);
+			if(!vnode_tmp)
+				continue;
+
+			vector_push(&node_vector, vnode_tmp);
 		}
 	}
-*/
 
-//	counter += __search_all_routes(&_search, destination, layer, cur_layer+1);
+	counter += __search_all_routes(&node_vector, destination, distance, cur_layer+1);
 	return counter ;
 }
 
 
-static int algo_all_routes(node_t *origin, node_t *destination, const int layer)
+static int algo_all_routes(node_t *origin, node_t *destination, const int distance)
 {
 	int counter = 0;
-	search_t search;
+	vector_t node_vector;
+	vector_node_t *vnode;
+	node_distance_t *node_distance;
+	
 	node_t *node;
 	edge_t *edge;
-	memset(&search, 0,sizeof(search_t));
-	init_search(&search);
-	search_add(&search, origin);
 
-	counter += __search_all_routes(&search, destination, layer, 0);
+	node_distance = create_node_distance(origin, 0);
+	if(!node_distance)
+		return -1;
+
+	vnode = create_vector_node((void *)node_distance);
+	if(!vnode)
+		return -1;
+
+	memset(&node_vector, 0,sizeof(vector_t));
+	init_vector(&node_vector);
+	vector_push(&node_vector, vnode);
+
+#if 0
+	vnode = vector_pop(&node_vector);
+	printf("%s:%d vnode addr = 0x%x\n",__func__,__LINE__,vnode);
+
+	node_distance = (node_distance_t*)vnode->data;
+	printf("%s:%d node_distance addr = 0x%x\n",__func__,__LINE__,node_distance);
+	printf("%s:%d data[%c] ditance = %d\n",__func__,__LINE__,node_distance->node->data, node_distance->distance);
+	vector_push(&node_vector, vnode);
+#endif
+	counter += __search_all_routes(&node_vector, destination, distance, 0);
 
 	if(counter <= 0)
 		return -1;

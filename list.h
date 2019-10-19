@@ -31,7 +31,10 @@ static inline void list_add(list_t *entry, list_t *head)
 
 static inline void list_add_tail(list_t *entry, list_t *head)
 {
-    __list_add(entry, head->prev, head);
+	head->prev->next = entry;
+	entry->prev = head->prev;
+	head->prev = entry;
+	entry->next = head;
 }
 
 static inline void __list_del(list_t *prev, list_t *next)
@@ -42,7 +45,12 @@ static inline void __list_del(list_t *prev, list_t *next)
 
 static inline void list_del(list_t *entry)
 {
-    __list_del(entry->prev, entry->next);
+//    __list_del(entry->prev, entry->next);
+	entry->prev->next = entry->next;
+	entry->next->prev = entry->prev;
+	entry->next = entry;
+	entry->prev = entry;
+//    init_list(entry);
 }
 
 static inline int list_empty(list_t *head)

@@ -123,7 +123,7 @@ int analyzer_graph(graph_analyzer_t *ga, char *route)
 		return -1;
 	origin = get_node(ga->graph, algo_route[0]);
 	destination = get_node(ga->graph, algo_route[1]);
-	printf("%s:%d origin data = %c, destination data = %c\n",__func__,__LINE__,origin->data, destination->data);
+	//printf("%s:%d origin data = %c, destination data = %c\n",__func__,__LINE__,origin->data, destination->data);
 	layer = atoi(algo_layer);
 	if(layer <= 0)
 		return -1;
