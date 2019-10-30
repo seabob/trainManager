@@ -69,6 +69,7 @@ int main(int argv, char **argc)
 	    continue;
 	}else
 	{
+	    printf("path = %s\n",path);
     	    distance = get_calculate(&train_manager, path);
             if(distance > 0)
                 printf("[result]: %d\n", distance);

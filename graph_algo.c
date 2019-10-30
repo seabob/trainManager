@@ -39,6 +39,21 @@ static int algo_absolute_distance(graph_t *graph, const char *routes)
     return __algo_absolute_distance(graph, routes);
 }
 
+static int duration_absolute_distance(graph_t *graph, const char *routes)
+{
+    int ret = 0;
+    int sum = 0;
+    int index = 0;
+    int length = strlen(routes);
+
+    sum += (length - 2) * 2;
+
+    ret = __algo_absolute_distance(graph, routes);
+    if(ret >= 0)
+	return (sum + ret);
+    return -1;
+}
+
 static int __algo_shortest_distance(node_t *origin, node_t *destination, stack_t *stack, int last_distance, int cur_layer)
 {
 	edge_t *edge = NULL;
@@ -240,6 +255,7 @@ static graph_algo_t __default_graph_algo = {
     .algo_routes_scheme = algo_routes_scheme,
     .algo_trips_scheme = algo_trips_scheme,
     .algo_all_routes = algo_all_routes,
+    .duration_absolute_distance = duration_absolute_distance,
 };
 
 int init_graph_algo(graph_algo_t *algo)

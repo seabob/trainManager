@@ -75,7 +75,7 @@ int analyzer_graph(graph_analyzer_t *ga, char *route)
 	layer = atoi(algo_layer);
     }
 
-  //  printf("cmd[%s], route[%s], layer[%s]\n",algo_cmd, algo_route, algo_layer);
+    printf("cmd[%s], route[%s], layer[%s]\n",algo_cmd, algo_route, algo_layer);
 
     if(strlen(algo_route) < 2)
    	return -1;
@@ -113,6 +113,10 @@ int analyzer_graph(graph_analyzer_t *ga, char *route)
 	if(layer <= 0)
 		return -1;
 	return ga->algo.algo_all_routes(origin, destination, layer);
+    }
+    else if(strcmp(algo_cmd,"duration") == 0)
+    {
+	return ga->algo.duration_absolute_distance(ga->graph, algo_route);
     }else 
     {
         printf("UNKNOWN CMD :%s\n",algo_cmd);
