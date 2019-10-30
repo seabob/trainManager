@@ -12,7 +12,9 @@ typedef struct graph_algo{
     int     (*duration_absolute_distance)(graph_t *graph, const char *route);
     int     (*algo_shortest_distance)(node_t *origin ,node_t *destination);
     int     (*algo_routes_scheme)(node_t *origin, node_t *destination, const int layer);
+    int	    (*duration_routes_scheme)(node_t *origin, node_t *destination, const int duration);
     int     (*algo_trips_scheme)(node_t *origin, node_t *destination, const int layer);
+    int     (*duration_trips_scheme)(node_t *origin, node_t *destination, const int duration);
     int     (*algo_all_routes)(node_t *origin, node_t *destination, const int layer);
 }graph_algo_t;
 

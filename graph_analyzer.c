@@ -117,7 +117,22 @@ int analyzer_graph(graph_analyzer_t *ga, char *route)
     else if(strcmp(algo_cmd,"duration") == 0)
     {
 	return ga->algo.duration_absolute_distance(ga->graph, algo_route);
-    }else 
+    }
+    else if(strcmp(algo_cmd, "duration_route") == 0)
+    {
+	layer = atoi(algo_layer);
+	if(layer < 0)
+	    return -1;
+	return ga->algo.duration_routes_scheme(origin, destination, layer);
+    }
+    else if(strcmp(algo_cmd, "duration_trip") == 0)
+    {
+	layer = atoi(algo_layer);
+	if(layer <= 0)
+	    return -1;
+	return ga->algo.duration_trips_scheme(origin, destination, layer);
+    }
+    else 
     {
         printf("UNKNOWN CMD :%s\n",algo_cmd);
     }

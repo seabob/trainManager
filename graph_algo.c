@@ -120,6 +120,29 @@ static int __search_routes_scheme(node_t *origin, node_t *destination,const int 
 	return count;
 }
 
+static int __duration_routes_scheme(node_t *origin, node_t *destination, int last_duration, const int duration, int cur_layer)
+{
+	int count = 0;
+	edge_t *edge = NULL;
+
+//	printf("%s:%d origin[%c] dest[%c] last_duration = %d duration = %d\n",__func__,__LINE__,origin->data, destination->data, last_duration, duration);
+	if(last_duration > duration)
+		return count;
+	LIST_FOR_EACH_ENTRY(edge, &origin->edges, list)
+	{
+		count += __duration_routes_scheme(edge->destination, destination, (edge->distance + last_duration + 2), duration, cur_layer + 1);
+		if(edge->destination == destination && (edge->distance + last_duration + 2) <= duration)
+		{
+			count += 1;
+		}
+	}
+	return count;
+}
+
+static int duration_routes_scheme(node_t *origin, node_t *destination, const int duration)
+{
+	return __duration_routes_scheme(origin, destination, 0, duration, 0);
+}
 
 static int algo_routes_scheme(node_t *origin, node_t *destination, const int layer)
 {
@@ -159,6 +182,27 @@ static int algo_trips_scheme(node_t *origin, node_t *destination, const int laye
         return -1;
 
     return counter;
+}
+
+static int __duration_trips_scheme(node_t *origin, node_t *destination, int last_duration, const int duration, int cur_layer)
+{
+	int count = 0;
+	edge_t *edge = NULL;
+	if(last_duration > duration)
+		return count;
+
+	LIST_FOR_EACH_ENTRY(edge, &origin->edges, list)
+	{
+		count += __duration_trips_scheme(edge->destination, destination, (last_duration + edge->distance + 2), duration, cur_layer + 1);
+		if((last_duration == duration) && (edge->destination == destination))
+				count += 1;
+	}
+	return count;
+}
+
+static int duration_trips_scheme(node_t *origin, node_t *destination, const int duration)
+{
+    return __duration_trips_scheme(origin, destination, 0, duration, 0);
 }
 
 static int __search_all_routes(vector_t *vector, node_t *destination, const int distance ,int cur_layer)
@@ -256,6 +300,8 @@ static graph_algo_t __default_graph_algo = {
     .algo_trips_scheme = algo_trips_scheme,
     .algo_all_routes = algo_all_routes,
     .duration_absolute_distance = duration_absolute_distance,
+    .duration_routes_scheme = duration_routes_scheme,
+    .duration_trips_scheme = duration_trips_scheme,
 };
 
 int init_graph_algo(graph_algo_t *algo)
